@@ -8,6 +8,7 @@ import com.example.springboot.demospringbootn11.dto.UrunDto;
 import com.example.springboot.demospringbootn11.dto.UserDto;
 import com.example.springboot.demospringbootn11.entity.Kullanici;
 import com.example.springboot.demospringbootn11.entity.Urun;
+import com.example.springboot.demospringbootn11.exception.UserPhoneAndNameNotEqualException;
 import com.example.springboot.demospringbootn11.service.entityservice.UserEntityService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
@@ -67,10 +68,13 @@ public class UserController {
 
     @DeleteMapping("/control/{name}/{phone}")
     public void delete(@PathVariable String name,@PathVariable String phone) {
-        userEntityService.deleteKullaniciByAdiAndTelefon(name, phone);
-        //userEntityService.deleteKullaniciByAdiAndTelefon(name, phone);
-        //Kullanici kullanici = userEntityService.findKullaniciByAdiAndTelefon(name,phone);
-        //userEntityService.delete(kullanici);
+        Kullanici kullanici = userEntityService.findKullaniciByAdi(name);
+
+        if (kullanici.equals(kullanici.getAdi())) {
+            userEntityService.deleteKullaniciByAdiAndTelefon(name, phone);
+        } else {
+            throw new UserPhoneAndNameNotEqualException("User's are not equal to name and phone :");
+        }
     }
 
     @PutMapping("")

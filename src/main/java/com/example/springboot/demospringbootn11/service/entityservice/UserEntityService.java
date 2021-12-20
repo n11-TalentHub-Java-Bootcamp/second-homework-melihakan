@@ -70,6 +70,10 @@ public class UserEntityService {
         List<UserDto> userDto = UserConverter.INSTANCE.convertUserListToUserDtoList(kullanici);
         return userDto;
     }
+    public Kullanici findKullaniciByAdi(String adi){
+        Kullanici kullanici = userDao.findKullaniciByAdi(adi);
+        return kullanici;
+    }
 
 
 

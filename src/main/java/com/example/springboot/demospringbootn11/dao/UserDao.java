@@ -16,6 +16,7 @@ public interface UserDao extends JpaRepository<Kullanici,Long> {
     Optional<Kullanici> findKullaniciByKullaniciAdi(String adi);
 
     Kullanici findKullaniciByTelefon(String telefon);
+    Kullanici findKullaniciByAdi(String adi);
 
     Kullanici removeKullaniciByAdiEqualsAndTelefon(String adi,String telefon);
     Kullanici removeKullaniciByKullaniciAdiEqualsAndTelefon(String adi,String telefon);
