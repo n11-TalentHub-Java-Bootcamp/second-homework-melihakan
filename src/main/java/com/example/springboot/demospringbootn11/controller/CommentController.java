@@ -5,6 +5,8 @@ import com.example.springboot.demospringbootn11.converter.CommentConverter;
 import com.example.springboot.demospringbootn11.dto.CommentDto;
 
 import com.example.springboot.demospringbootn11.entity.UrunYorum;
+import com.example.springboot.demospringbootn11.exception.ProductCommentIsEmptyException;
+import com.example.springboot.demospringbootn11.exception.UserCommentIsEmptyException;
 import com.example.springboot.demospringbootn11.service.entityservice.CommentEntityService;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -28,20 +30,30 @@ public class CommentController {
 
     @GetMapping("user/{userId}")
     public List<CommentDto> findAllCommentByKullaniciId(@PathVariable Long userId){
-        List<UrunYorum> commentList = commentEntityService.findAllByKullaniciOrderById(userId);
+        UrunYorum urunYorum = commentEntityService.findById(userId);
+        if(urunYorum.getYorum() == null){
+            throw new UserCommentIsEmptyException(urunYorum.getKullanici().getAdi()+" do not write comment  :");
+        }else {
 
-        List<CommentDto> commentDtos = CommentConverter.INSTANCE.convertAllCommentListToCommentDtosList(commentList);
+            List<UrunYorum> commentList = commentEntityService.findAllByKullaniciOrderById(userId);
+            List<CommentDto> commentDtos = CommentConverter.INSTANCE.convertAllCommentListToCommentDtosList(commentList);
 
-        return commentDtos;
+            return commentDtos;
+        }
 
     }
     @GetMapping("urun/{urunId}")
     public List<CommentDto> findAllCommentByUrunId(@PathVariable Long urunId){
-        List<UrunYorum> commentList = commentEntityService.findAllByUrunOrderById(urunId);
+        UrunYorum urunYorum = commentEntityService.findById(urunId);
+        if(urunYorum.getYorum() == null){
+            throw new ProductCommentIsEmptyException(urunYorum.getUrun().getAdi()+" do not write comment  :");
+        }else{
+            List<UrunYorum> commentList = commentEntityService.findAllByUrunOrderById(urunId);
 
-        List<CommentDto> commentDtos = CommentConverter.INSTANCE.convertAllYorumListToCommentDtosList(commentList);
+            List<CommentDto> commentDtos = CommentConverter.INSTANCE.convertAllYorumListToCommentDtosList(commentList);
 
-        return commentDtos;
+            return commentDtos;
+        }
     }
     @PostMapping("")
     public ResponseEntity<Object> saveComment(@RequestBody CommentDto commentDto) {
